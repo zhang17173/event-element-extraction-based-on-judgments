@@ -22,6 +22,16 @@ def crime_stage(input):
         print("未查找到犯罪阶段！！！")
 
 
+def victim_fault(input):
+    '''提取被害人是否有过错'''
+    re_victim_fault = re.compile(r"被害人.{1,10}过错")
+    search_victim_fault = re_victim_fault.search(input)
+    if search_victim_fault:
+        print(search_victim_fault.group())
+    else:
+        print("未找到被害人过错")
+
+
 def crime_name(input):
     '''提取罪名'''
     re_crime_name = re.compile(r'判决如下.*?被告人.*?犯(.*?罪)')
@@ -57,8 +67,10 @@ def extract_all(input):
     '''提取所有事件要素'''
     damage(input)
     crime_stage(input)
+    victim_fault(input)
     crime_name(input)
     sentence_result(input)
+
 
 f = open("data/input.txt", "r", encoding="utf-8")
 extract_all(f.read())
