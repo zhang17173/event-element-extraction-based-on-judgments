@@ -22,19 +22,21 @@ re_argument = re.compile(r"辩护人.{0,5}辩护意见.*?。")
 re_truth = re.compile(r"(公诉机关指控|检察院指控|审理查明).*?上述事实")
 
 for elem1, elem2, elem3 in list(zip(records, court_opinion, sentence)):
+    # 写入辩护人意见
     search_argument = re_argument.search(elem1)
     if search_argument:
         f1.write(search_argument.group() + '\n')
     else:
         f1.write("None\n")
-
+    # 写入审理查明
     search_truth = re_truth.search(elem1)
     if search_truth:
         f2.write(search_truth.group() + '\n')
     else:
         f2.write("None\n")
-
+    # 写入法院意见
     f3.write(elem2 + '\n')
+    # 写入判决结果
     f4.write(elem3+'\n')
 
 
