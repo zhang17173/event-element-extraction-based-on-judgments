@@ -2,6 +2,7 @@
 
 import xlrd
 import re
+from data_preprocess import preprocess
 
 
 excel_file = "data/案件.xlsx"  # excel文件路径
@@ -18,16 +19,21 @@ f2 = open("data/truth.txt", 'w', encoding='utf-8')  # 审理查明
 f3 = open("data/court_opinion.txt", 'w', encoding='utf-8')  # 法院意见
 f4 = open("data/sentence.txt", 'w', encoding='utf-8')  # 判决结果
 
-re_argument = re.compile(r"辩护人.{0,5}辩护意见.*?。")
+re_argument = re.compile(r"辩护人.*?(提出|认为|所提|辩解|要求|建议|辩护|辩称).*?。")
 re_truth = re.compile(r"(公诉机关指控|检察院指控|审理查明).*?上述事实")
 
+
 for elem1, elem2, elem3 in list(zip(records, court_opinion, sentence)):
+    elem1 = preprocess(elem1)
+    elem2 = preprocess(elem2)
+    elem3 = preprocess(elem3)
     # 写入辩护人意见
     search_argument = re_argument.search(elem1)
     if search_argument:
         f1.write(search_argument.group() + '\n')
     else:
         f1.write("None\n")
+
     # 写入审理查明
     search_truth = re_truth.search(elem1)
     if search_truth:
