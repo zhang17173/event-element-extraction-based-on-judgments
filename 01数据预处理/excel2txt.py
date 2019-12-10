@@ -15,7 +15,8 @@ court_opinion = sheet0.col_values(27)[1:]  # 第27列代表法院意见
 sentence = sheet0.col_values(29)[1:]  # 第29列代表判决结果
 
 re_argument = re.compile(r"辩护人.*?(提出|认为|所提|辩解|要求|建议|辩护|辩称).*?。")
-re_truth = re.compile(r"(公诉机关指控|检察院.{0,5}指控|经.*?查明).*?(上述事实|以上事实|公诉机关认为|公诉机关认定|为证实|该院认为|检察院认为|被告人.*?异议)")
+re_truth = re.compile(r"(公诉机关指控|检察院.{0,5}指控|经.*?查明).*?(上述事实|以上事实|上述案件事实|公诉机关认为|公诉机关认定|为证实|该院认为|检察院认为|被告人.*?异议)")
+re_truth_1 = re.compile(r"(公诉机关指控|检察院.{0,5}指控|经.*?查明).*")
 re_sentence = re.compile(r"判决如下.*?(被告人.*(年|月|处罚))")
 
 # 写入文本文件
@@ -40,7 +41,11 @@ for elem1, elem2, elem3 in list(zip(records, court_opinion, sentence)):
     if search_truth:
         f2.write(search_truth.group() + '\n')
     else:
-        f2.write("None\n")
+        search_truth_1 = re_truth_1.search(elem1)
+        if search_truth_1:
+            f2.write(search_truth_1.group() + '\n')
+        else:
+            f2.write("None\n")
     # 写入法院意见
     f3.write(elem2 + '\n')
     # 写入判决结果
