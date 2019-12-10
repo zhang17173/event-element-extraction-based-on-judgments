@@ -9,6 +9,7 @@ __pycache__/
 .vscode
 
 .xls
+.xlsx
 
 # Distribution / packaging
 .Python
@@ -131,3 +132,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+data/案件.xlsx
