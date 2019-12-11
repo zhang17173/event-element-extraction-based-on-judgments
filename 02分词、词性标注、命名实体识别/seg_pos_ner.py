@@ -17,8 +17,9 @@ command1 = "cd " + cws_path
 command2 = "./cws_cmdline --threads 24 --input "+input_path+" --segmentor-lexicon dict"
 command = command1 + "&&" + command2
 f = os.popen(command)
-words = f.read().split("\t")
+words = f.read().strip("\n").split("\t")
 print("seg done...")
+
 
 # 词性标注
 postagger = Postagger()  # 初始化词性标注实例
@@ -36,8 +37,10 @@ f2 = open("data/seg_pos_ner.txt", "w", encoding="utf-8")
 
 # 打印结果
 for word, postag, netag in zip(words, postags, netags):
-    if word == "END":
-        f2.write("\n")
+    if "\r" in word:
+        print(repr(word))
+    # if word == "END":
+    #     f2.write("\n")
     else:
         f2.write(word+"\t"+postag+"\t"+netag+"\n")
 

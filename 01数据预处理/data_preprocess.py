@@ -17,3 +17,4 @@ def preprocess(line):
     line2 = re.sub("[%s]+" % punctuation, "", line1)  # 去除标点、特殊字符
     line3 = re_extra.sub("", line2)  # 去除冗余词
     return line3
+

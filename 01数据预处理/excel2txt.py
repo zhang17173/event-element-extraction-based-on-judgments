@@ -39,13 +39,13 @@ for elem1, elem2, elem3 in list(zip(records, court_opinion, sentence)):
     # 写入审理查明
     search_truth = re_truth.search(elem1)
     if search_truth:
-        f2.write(search_truth.group() + 'END')
+        f2.write(search_truth.group() + '\r')
     else:
         search_truth_1 = re_truth_1.search(elem1)
         if search_truth_1:
-            f2.write(search_truth_1.group() + 'END')
+            f2.write(search_truth_1.group() + '\r')
         else:
-            f2.write("END")
+            f2.write("\r")
     # 写入法院意见
     f3.write(elem2 + '\n')
     # 写入判决结果
