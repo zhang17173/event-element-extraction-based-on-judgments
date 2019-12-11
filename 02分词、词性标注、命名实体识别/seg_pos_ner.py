@@ -17,17 +17,7 @@ command1 = "cd " + cws_path
 command2 = "./cws_cmdline --threads 24 --input "+input_path+" --segmentor-lexicon dict"
 command = command1 + "&&" + command2
 f = os.popen(command)
-words = f.read().strip().split("\t")
-# 处理回车的问题
-i = 0
-while i < len(words):
-    if "\n" in words[i]:
-        part1 = words[i].split("\n")[0]
-        part2 = words[i].split("\n")[-1]
-        words[i] = part1
-        words.insert(i + 1, '\n')
-        words.insert(i + 2, part2)
-    i += 1
+words = f.read().split("\t")
 print("seg done...")
 
 # 词性标注
@@ -46,10 +36,8 @@ f2 = open("data/seg_pos_ner.txt", "w", encoding="utf-8")
 
 # 打印结果
 for word, postag, netag in zip(words, postags, netags):
-    # if word == "\n":
-    #     f2.write("\n")
-    if '\n' in word:
-        print(repr(word))
+    if word == "END":
+        f2.write("\n")
     else:
         f2.write(word+"\t"+postag+"\t"+netag+"\n")
 
