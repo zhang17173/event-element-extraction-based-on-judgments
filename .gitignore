@@ -10,7 +10,7 @@ __pycache__/
 .idea
 .xls
 .xlsx
-
+.DS_Store
 # Distribution / packaging
 .Python
 build/
