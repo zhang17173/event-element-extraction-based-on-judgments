@@ -8,7 +8,7 @@ import re
 from data_preprocess import preprocess
 
 
-excel_file = "../data/案件.xlsx"  # excel文件路径
+excel_file = "data/案件.xlsx"  # excel文件路径
 wb = xlrd.open_workbook(excel_file)
 sheet0 = wb.sheets()[0]  # 获取第一个工作表
 
@@ -23,10 +23,10 @@ re_truth_1 = re.compile(r"(公诉机关指控|检察院.{0,5}指控|经.*?查明
 re_sentence = re.compile(r"判决如下.*?(被告人.*(年|月|处罚))")
 
 # 写入文本文件
-f1 = open("../data/argument.txt", "w", encoding='utf-8')   # 辩护人意见
-f2 = open("../data/truth.txt", 'w', encoding='utf-8')  # 审理查明
-f3 = open("../data/court_opinion.txt", 'w', encoding='utf-8')  # 法院意见
-f4 = open("../data/sentence.txt", 'w', encoding='utf-8')  # 判决结果
+f1 = open("data/argument.txt", "w", encoding='utf-8')   # 辩护人意见
+f2 = open("data/truth.txt", 'w', encoding='utf-8')  # 审理查明
+f3 = open("data/court_opinion.txt", 'w', encoding='utf-8')  # 法院意见
+f4 = open("data/sentence.txt", 'w', encoding='utf-8')  # 判决结果
 
 for elem1, elem2, elem3 in list(zip(records, court_opinion, sentence)):
     # 预处理
@@ -42,13 +42,13 @@ for elem1, elem2, elem3 in list(zip(records, court_opinion, sentence)):
     # 写入审理查明
     search_truth = re_truth.search(elem1)
     if search_truth:
-        f2.write(search_truth.group() + '\r')
+        f2.write(search_truth.group() + '\n')
     else:
         search_truth_1 = re_truth_1.search(elem1)
         if search_truth_1:
-            f2.write(search_truth_1.group() + '\r')
+            f2.write(search_truth_1.group() + '\n')
         else:
-            f2.write("\r")
+            f2.write("None\n")
     # 写入法院意见
     f3.write(elem2 + '\n')
     # 写入判决结果
