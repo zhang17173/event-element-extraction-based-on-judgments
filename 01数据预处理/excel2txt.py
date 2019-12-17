@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# 从excel中导出txt格式的案件信息
-# 分别为辩护人意见、审理查明、法院意见和判决结果
+# 从excel中导出txt格式的案件信息,分别为辩护人意见、审理查明、法院意见和判决结果
 
 import xlrd
 import re
