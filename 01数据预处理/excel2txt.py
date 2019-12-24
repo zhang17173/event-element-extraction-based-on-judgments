@@ -6,11 +6,11 @@ import re
 from data_preprocess import preprocess
 
 
-excel_file = "data/original_data/案件.xlsx"  # excel文件路径
+excel_file = "data/original_data/所有案件.xlsx"  # excel文件路径
 wb = xlrd.open_workbook(excel_file)
 sheet0 = wb.sheets()[0]  # 获取第一个工作表
 
-records = sheet0.col_values(21)[1:]  # 第21列代表庭审过程
+records = sheet0.col_values(21)[1:]  # 第21列代表庭审过程，包含【辩护人意见】和【审理查明】两部分
 court_opinion = sheet0.col_values(27)[1:]  # 第27列代表法院意见
 sentence = sheet0.col_values(29)[1:]  # 第29列代表判决结果
 
