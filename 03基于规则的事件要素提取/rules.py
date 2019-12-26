@@ -81,23 +81,15 @@ def sentence_result(input):
         print(search_probation.group(1))
 
 
-def extract_all(input):
-    '''提取所有事件要素'''
-    contribute(input)
-    damage(input)
-    crime_stage(input)
-    victim_fault(input)
-    crime_name(input)
-    sentence_result(input)
-
 def limited_responsibility(input):
-    '''是否限定刑事责任'''
-    re_limited_responsibility = re.compile(r'[系,为,是,属于,属,具有,有]限定刑事责任能力(人)?')
+    '''是否为限定刑事责任能力'''
+    re_limited_responsibility = re.compile(r'(系|为|是|属于|属|具有|有)限定刑事责任能力(人)?')
     searchObj = re_limited_responsibility.search(input)
     if searchObj:
         print(searchObj.group())
     else:
         print("未找到是否限定刑事责任能力情况！！！")
+
 
 def pedigree(input):
     '''前科记录：'''
@@ -111,6 +103,16 @@ def pedigree(input):
         print(searchObj02.group())
     else:
         print("未找到前科情况！！！")
+
+
+def extract_all(input):
+    '''提取所有事件要素'''
+    contribute(input)
+    damage(input)
+    crime_stage(input)
+    victim_fault(input)
+    crime_name(input)
+    sentence_result(input)
 
 
 f = open("data/new_input.txt", "r", encoding="utf-8")
