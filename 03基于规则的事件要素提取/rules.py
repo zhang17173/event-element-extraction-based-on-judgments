@@ -1,10 +1,11 @@
 import re
 
+
 def li_gong(input):
     '''提取立功：'''
-    re_li_gong01=re.compile(r'经查证属实([具有|属|有|为|是](立功[表现|情节]?))')
-    re_li_gong02=re.compile(r'([具有|属|有|为|是]立功[表现|情节]).*?予以[采信|采纳]')
-    re_li_gong03=re.compile(r'鉴于.*?([属|属于|有](立功[表现|情节]?))')
+    re_li_gong01 = re.compile(r'经查证属实([具有|属|有|为|是](立功[表现|情节]?))')
+    re_li_gong02 = re.compile(r'([具有|属|有|为|是]立功[表现|情节]).*?予以[采信|采纳]')
+    re_li_gong03 = re.compile(r'鉴于.*?([属|属于|有](立功[表现|情节]?))')
     searchObj01 = re_li_gong01.search(input)
     searchObj02 = re_li_gong02.search(input)
     searchObj03 = re_li_gong03.search(input)
@@ -18,10 +19,11 @@ def li_gong(input):
     else:
         print("未找到立功情况！！！")
 
+
 def damage(input):
     '''提取伤亡情况:经鉴定戴某某因外伤致左眼眶下壁骨折和左侧上颌窦前壁骨折构成轻伤二级'''
     re_damage = re.compile(r'经(.*)?[鉴定,诊断](.*)?(轻微伤|([轻,重]伤(.级)?))')
-   
+
     searchObj = re_damage.search(input)
     if searchObj:
         print(searchObj.group(3))
@@ -93,4 +95,3 @@ def extract_all(input):
 
 f = open("data/new_input.txt", "r", encoding="utf-8")
 extract_all(f.read())
-
