@@ -90,10 +90,10 @@ def extract_all(input):
     crime_name(input)
     sentence_result(input)
 
-def limit_responsibility(input):
+def limited_responsibility(input):
     '''是否限定刑事责任'''
-    re_limit_responsibility = re.compile(r'[系,为,是,属于,属,具有,有]限定刑事责任能力(人)?')
-    searchObj = re_limit_responsibility.search(input)
+    re_limited_responsibility = re.compile(r'[系,为,是,属于,属,具有,有]限定刑事责任能力(人)?')
+    searchObj = re_limited_responsibility.search(input)
     if searchObj:
         print(searchObj.group())
     else:
@@ -112,6 +112,6 @@ def pedigree(input):
     else:
         print("未找到前科情况！！！")
 
-        
+
 f = open("data/new_input.txt", "r", encoding="utf-8")
 extract_all(f.read())
