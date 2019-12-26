@@ -88,13 +88,13 @@ def limited_responsibility(input):
     if searchObj:
         print(searchObj.group())
     else:
-        print("未找到是否限定刑事责任能力情况！！！")
+        print("未找到是否限定刑事责任能力情况!!!")
 
 
 def pedigree(input):
     '''前科记录：'''
-    re_pedigree01 = re.compile(r'([有|无|没有|其](多次)?前科(劣迹)?(情况)?)')
-    re_pedigree02 = re.compile(r'系[初犯|累犯](偶犯)?')
+    re_pedigree01 = re.compile(r'((有|无|没有)(多次)?前科(劣迹)?(情况)?)')
+    re_pedigree02 = re.compile(r'系(初犯|累犯)(偶犯)?')
     searchObj01 = re_pedigree01.search(input)
     searchObj02 = re_pedigree02.search(input)
     if searchObj01:
@@ -102,7 +102,7 @@ def pedigree(input):
     elif searchObj02:
         print(searchObj02.group())
     else:
-        print("未找到前科情况！！！")
+        print("未找到前科情况!!!")
 
 
 def extract_all(input):
@@ -111,6 +111,8 @@ def extract_all(input):
     damage(input)
     crime_stage(input)
     victim_fault(input)
+    limited_responsibility(input)
+    pedigree(input)
     crime_name(input)
     sentence_result(input)
 
