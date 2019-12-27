@@ -9,6 +9,7 @@ def contribute(input):
     searchObj01 = re_contribute01.search(input)
     searchObj02 = re_contribute02.search(input)
     searchObj03 = re_contribute03.search(input)
+    print("【立功表现】", end=' ')
     if searchObj01:
         print(searchObj01.group(1))
     elif searchObj02:
@@ -23,6 +24,7 @@ def damage(input):
     '''提取伤亡情况，如：经鉴定戴某某因外伤致左眼眶下壁骨折和左侧上颌窦前壁骨折构成轻伤二级'''
     re_damage = re.compile(r'经.*?(鉴定|诊断).*?(轻微伤|[轻重]伤(.级)?)')
     searchObj = re_damage.search(input)
+    print("【伤亡情况】", end=' ')
     if searchObj:
         print(searchObj.group(2))
     else:
@@ -34,6 +36,7 @@ def crime_stage(input):
     re_crime_stage = re.compile(
         r'(属|属于|系|是|具有|构成|认定为|认定其为)(犯罪预备|犯罪中止|犯罪未遂|犯罪既遂|未遂|杀人未遂|故意杀人罪未遂)')
     searchObj = re_crime_stage.search(input)
+    print("【犯罪阶段】", end=' ')
     if searchObj:
         print(searchObj.group(2))
     else:
@@ -44,6 +47,7 @@ def victim_fault(input):
     '''提取被害人是否有过错，如：被害人郭某酒后失控无端追打王某在案发起因上有一定过错责任'''
     re_victim_fault = re.compile(r"被害人.{1,30}过错")
     search_victim_fault = re_victim_fault.search(input)
+    print("【被害人过错】", end=' ')
     if search_victim_fault:
         print(search_victim_fault.group())
     else:
@@ -54,6 +58,7 @@ def crime_name(input):
     '''提取罪名，如：被告人刘某某犯故意伤害罪'''
     re_crime_name = re.compile(r'被告人.*?犯(.*?罪)')
     searchObj = re_crime_name.search(input)
+    print("【认定罪名】", end=' ')
     if searchObj:
         print(searchObj.group(1))
     else:
@@ -71,6 +76,8 @@ def sentence_result(input):
     search_life_imprison = re_life_imprison.search(input)
     search_fixed_time_imprison = re_fixed_time_imprison.search(input)
     search_probation = re_probation.search(input)
+
+    print("【判决结果】", end=' ')
     if search_death:
         print(search_death.group(1))
     if search_life_imprison:
@@ -85,10 +92,11 @@ def limited_responsibility(input):
     '''是否为限定刑事责任能力'''
     re_limited_responsibility = re.compile(r'(系|为|是|属于|属|具有|有)限定刑事责任能力(人)?')
     searchObj = re_limited_responsibility.search(input)
+    print("【限定刑事责任能力】", end=' ')
     if searchObj:
         print(searchObj.group())
     else:
-        print("未找到是否限定刑事责任能力情况!!!")
+        print("未找到限定刑事责任能力情况!!!")
 
 
 def pedigree(input):
@@ -97,6 +105,7 @@ def pedigree(input):
     re_pedigree02 = re.compile(r'系(初犯|累犯)(偶犯)?')
     searchObj01 = re_pedigree01.search(input)
     searchObj02 = re_pedigree02.search(input)
+    print("【前科记录】", end=' ')
     if searchObj01:
         print(searchObj01.group())
     elif searchObj02:
@@ -107,15 +116,15 @@ def pedigree(input):
 
 def extract_all(input):
     '''提取所有事件要素'''
-    contribute(input)
     damage(input)
     crime_stage(input)
+    contribute(input)
+    pedigree(input)
     victim_fault(input)
     limited_responsibility(input)
-    pedigree(input)
     crime_name(input)
     sentence_result(input)
 
 
-f = open("data/new_input.txt", "r", encoding="utf-8")
+f = open("data/test.txt", "r", encoding="utf-8")
 extract_all(f.read())

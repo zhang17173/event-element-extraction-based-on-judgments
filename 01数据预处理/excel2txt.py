@@ -24,14 +24,17 @@ re_sentence = re.compile(r"判决如下.*?(被告人.*(年|月|处罚))")  # 提
 # 写入文本文件
 f1 = open("data/original_data/argument.txt", "w", encoding='utf-8')   # 辩护人意见
 f2 = open("data/original_data/truth.txt", 'w', encoding='utf-8')  # 审理查明
-f3 = open("data/original_data/court_opinion.txt", 'w', encoding='utf-8')  # 法院意见
+f3 = open("data/original_data/court_opinion.txt",
+          'w', encoding='utf-8')  # 法院意见
 f4 = open("data/original_data/sentence.txt", 'w', encoding='utf-8')  # 判决结果
+f5 = open("data/original_data/cases.txt", "w", encoding="utf-8")  # 完整的判决书
 
 for elem1, elem2, elem3 in list(zip(records, court_opinion, sentence)):
     # 预处理
     elem1 = preprocess(elem1)
     elem2 = preprocess(elem2)
     elem3 = preprocess(elem3)
+    f5.write(elem1+elem2+elem3+"\n")  # 写入完整的判决书
     # 写入辩护人意见
     search_argument = re_argument.search(elem1)
     if search_argument:
@@ -62,3 +65,4 @@ f1.close()
 f2.close()
 f3.close()
 f4.close()
+f5.close()
