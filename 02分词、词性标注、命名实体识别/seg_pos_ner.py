@@ -3,7 +3,7 @@ from pyltp import Postagger
 from pyltp import NamedEntityRecognizer
 
 LTP_DATA_DIR = "/home/zhang17173/ltp_data_v3.4.0"  # ltp模型目录的路径，根据实际情况修改
-cws_path = "/home/zhang17173/ltp-3.4.0/bin/examples"  # 填写ltp可执行文件目录路径
+cws_path = "/home/zhang17173/ltp-3.4.0/bin/examples"  # ltp二进制可执行文件目录路径
 temp_path = "/home/zhang17173/event-element-extraction-based-on-judgments/02分词、词性标注、命名实体识别/temp.txt"  # 临时文件路径
 
 # 词性标注模型
@@ -19,7 +19,7 @@ recognizer.load(ner_model_path)  # 加载模型
 
 def spn(input):
     '''对文本进行分词、词性标注、命名实体识别'''
-    # 创建临时文件用以分词
+    # 写入临时文件用以分词
     f = open(temp_path, "w", encoding="utf-8")
     f.write(input)
     f.close()
@@ -28,12 +28,23 @@ def spn(input):
     command2 = "./cws_cmdline --threads 24 --input " + \
         temp_path + " --segmentor-lexicon dict"
     f_words = os.popen(command1 + "&&" + command2)
-    os.remove(temp_path)
     words = f_words.read().strip("\n").split("\t")
     postags = postagger.postag(words)  # 词性标注
     netags = recognizer.recognize(words, postags)  # 命名实体识别
-    return words, postags, netags
+    return zip(words, postags, netags)
 
+
+f_output = open("02分词、词性标注、命名实体识别/seg_pos_ner_result.txt",
+                "w", encoding="utf-8")
+f = open("data/original_data/court_opinion.txt", "r", encoding="utf-8")
+lines = f.readlines()
+for line in lines:
+    zipped = spn(line)
+    for word, postag, netag in zipped:
+        f_output.write(word+"\t"+postag+"\t"+netag+"\n")
+    f_output.write("\n")
+f_output.close()
+f.close()
 
 # 释放模型
 postagger.release()

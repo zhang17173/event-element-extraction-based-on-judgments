@@ -14,7 +14,8 @@ records = sheet0.col_values(21)[1:]  # 第21列代表庭审过程，包含【辩
 court_opinion = sheet0.col_values(27)[1:]  # 第27列代表法院意见
 sentence = sheet0.col_values(29)[1:]  # 第29列代表判决结果
 
-re_argument = re.compile(r"辩护人.*?(提出|认为|所提|辩解|要求|建议|辩护|辩称).*?。")    # 提取辩护人意见
+re_argument = re.compile(
+    r"辩护人.{0,6}(提出|认为|所提|辩解|要求|建议|辩护|辩称).*?。")    # 提取辩护人意见
 # 提取审理查明
 re_truth = re.compile(
     r"(公诉机关指控|检察院.{0,5}指控|经.*?查明).*?(上述事实|以上事实|上述案件事实|公诉机关认为|公诉机关认定|为证实|该院认为|检察院认为|被告人.*?异议)")
@@ -27,18 +28,19 @@ f2 = open("data/original_data/truth.txt", 'w', encoding='utf-8')  # 审理查明
 f3 = open("data/original_data/court_opinion.txt",
           'w', encoding='utf-8')  # 法院意见
 f4 = open("data/original_data/sentence.txt", 'w', encoding='utf-8')  # 判决结果
-f5 = open("data/original_data/cases.txt", "w", encoding="utf-8")  # 完整的判决书
 
 for elem1, elem2, elem3 in list(zip(records, court_opinion, sentence)):
     # 预处理
     elem1 = preprocess(elem1)
     elem2 = preprocess(elem2)
     elem3 = preprocess(elem3)
-    f5.write(elem1+elem2+elem3+"\n")  # 写入完整的判决书
     # 写入辩护人意见
-    search_argument = re_argument.search(elem1)
-    if search_argument:
-        f1.write(search_argument.group() + '\n')
+    search_argument_1 = re_argument.search(elem1)
+    search_argument_2 = re_argument.search(elem2)
+    if search_argument_1:
+        f1.write(search_argument_1.group() + '\n')
+    elif search_argument_2:
+        f1.write(search_argument_2.group() + '\n')
     else:
         f1.write("None\n")
     # 写入审理查明
@@ -65,4 +67,3 @@ f1.close()
 f2.close()
 f3.close()
 f4.close()
-f5.close()

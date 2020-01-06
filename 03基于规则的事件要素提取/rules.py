@@ -125,6 +125,6 @@ def extract_all(input):
     crime_name(input)
     sentence_result(input)
 
-
+   
 f = open("data/test.txt", "r", encoding="utf-8")
 extract_all(f.read())
