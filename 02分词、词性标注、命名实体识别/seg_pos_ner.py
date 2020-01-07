@@ -49,3 +49,4 @@ f.close()
 # 释放模型
 postagger.release()
 recognizer.release()
+os.remove(temp_path)

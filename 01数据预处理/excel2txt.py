@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-# 从excel中导出txt格式的案件信息,分别为辩护人意见、审理查明、法院意见和判决结果
+# 从excel中导出txt格式的案件信息,分别为【辩护人意见】、【审理查明】、【法院意见】和【判决结果】
 
 import xlrd
 import re
 from data_preprocess import preprocess
-
 
 excel_file = "data/original_data/所有案件.xlsx"  # excel文件路径
 wb = xlrd.open_workbook(excel_file)
@@ -28,6 +27,7 @@ f2 = open("data/original_data/truth.txt", 'w', encoding='utf-8')  # 审理查明
 f3 = open("data/original_data/court_opinion.txt",
           'w', encoding='utf-8')  # 法院意见
 f4 = open("data/original_data/sentence.txt", 'w', encoding='utf-8')  # 判决结果
+f5 = open("data/original_data/cases.txt", "w", encoding="utf-8")  # 完整的案件
 
 for elem1, elem2, elem3 in list(zip(records, court_opinion, sentence)):
     # 预处理
@@ -54,16 +54,22 @@ for elem1, elem2, elem3 in list(zip(records, court_opinion, sentence)):
         else:
             f2.write("None\n")
     # 写入法院意见
-    f3.write(elem2 + '\n')
+    if elem2 == "":
+        f3.write("None\n")
+    else:
+        f3.write(elem2 + '\n')
     # 写入判决结果
     search_sentence = re_sentence.search(elem3)
     if search_sentence:
         f4.write(search_sentence.group(1) + '\n')
     else:
         f4.write("None\n")
+    # 写入完整案件
+    f5.write(elem1+elem2+elem3+"\n")
 
 
 f1.close()
 f2.close()
 f3.close()
 f4.close()
+f5.close()
