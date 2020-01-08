@@ -28,9 +28,7 @@ def find_element(l, *ss):
 
 
 def text2num(text):
-    num = 0
-    # 将text序列连接成字符串
-    text = "".join(text)
+    '''中文数字转阿拉伯数字,只适用于不超过四位数的情况'''
     digit = {
         '一': 1,
         '二': 2,
@@ -42,6 +40,7 @@ def text2num(text):
         '七': 7,
         '八': 8,
         '九': 9}
+    num = 0
     if text:
         idx_q, idx_b, idx_s = text.find('千'), text.find('百'), text.find('十')
         if idx_q != -1:
@@ -49,7 +48,7 @@ def text2num(text):
         if idx_b != -1:
             num += digit[text[idx_b - 1:idx_b]] * 100
         if idx_s != -1:
-            # 十前忽略一的处理
+            # “十”前没有数字时默认为“一十”
             num += digit.get(text[idx_s - 1:idx_s], 1) * 10
         if text[-1] in digit:
             num += digit[text[-1]]
@@ -57,17 +56,12 @@ def text2num(text):
 
 
 def per_num(text):
-    string = re.findall(r"\d+", text)
-    if len(string) == 0:
-        r1 = re.compile(u'[一二两三四五六七八九十]{1,}')
-        r2 = r1.findall(text)
-        if len(r2) == 0:
-            num = 1
-        else:
-            num = text2num(r2)
+    '''查找语句中的中文数字并转为阿拉伯数字,只适用于不超过四位数的情况'''
+    chinese = re.findall(r"[一二两三四五六七八九十].*[一二两三四五六七八九十千百]", text)
+    if chinese:
+        return text2num(chinese[0])
     else:
-        num = string[0]
-    return num
+        return 1  # 默认为一
 
 
 def extract_seg(content):
@@ -125,6 +119,7 @@ def sentence_result(text):
         else:
             num = text2num(r4)
     return num
+
 
 def get_event_elements(case_file):
     """
@@ -194,6 +189,7 @@ def get_event_elements(case_file):
         #     print(key, value)
 
         return event_elements
+
 
 def get_patterns(event_elements):
     """
