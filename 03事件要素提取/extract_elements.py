@@ -1,8 +1,7 @@
 import sys
-sys.path.append(
-    "/home/zhang17173/event-element-extraction-based-on-judgments/04判决结果预测")
-from rules import *
+sys.path.append("/home/zhang17173/event-element-extraction-based-on-judgments/04判决结果预测")
 from utils import *
+from rules import *
 
 complete_data = "data/original_data/cases.txt"
 court_opinion = "data/original_data/court_opinion.txt"
@@ -21,5 +20,5 @@ for idx, (line1, line2) in enumerate(zip(lines1, lines2)):
     vf = victim_fault(line1)
     dm = damage(line1)
     sr = sentence_result(line2)
-    positive = get_event_elements(crf_result+str(idx+1)+".txt")
-    print(cn,cs,lr,pd,vf,dm,sr,positive, sep="\n")
+    positives = get_event_elements(crf_result+str(idx+1)+".txt")
+    print(cn, cs, lr, pd, vf, dm, sr, positives, sep="\n")
