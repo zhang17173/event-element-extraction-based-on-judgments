@@ -20,7 +20,7 @@ def contribute(input):
 
 
 def damage(input):
-    '''提取伤亡情况，如：经鉴定戴某某因外伤致左眼眶下壁骨折和左侧上颌窦前壁骨折构成轻伤二级'''
+    '''提取受伤情况，如：经鉴定戴某某因外伤致左眼眶下壁骨折和左侧上颌窦前壁骨折构成轻伤二级'''
     re_damage = re.compile(r'经.*?(鉴定|诊断).*?(轻微伤|[轻重]伤(.级)?)')
     searchObj = re_damage.search(input)
     if searchObj:
@@ -28,6 +28,14 @@ def damage(input):
     else:
         return None
 
+def death(input):
+    '''提取死亡人数，如：致n人死亡'''
+    re_death = re.compile(r'致.[0,8]死亡')
+    searchObj = re_death.search(input)
+    if searchObj:
+        return searchObj.group()
+    else:
+        return None
 
 def crime_stage(input):
     '''对故意杀人案件提取犯罪阶段'''
