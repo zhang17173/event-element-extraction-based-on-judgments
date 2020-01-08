@@ -55,42 +55,56 @@ def text2num(text):
     return num
 
 
-def per_num(text):
+def num_extract(text):
     '''查找语句中的中文数字并转为阿拉伯数字,只适用于不超过四位数的情况'''
-    chinese = re.findall(r"[一二两三四五六七八九十].*[一二两三四五六七八九十千百]", text)
-    if chinese:
-        return text2num(chinese[0])
+    # 如果语句中已经含有阿拉伯数字，则直接提取并返回
+    num = re.findall(r"\d+", text)
+    if num:
+        return num[0]
     else:
-        return 1  # 默认为一
+        chinese = re.findall(r"[一二两三四五六七八九十].*[一二两三四五六七八九十千百]?", text)
+        if chinese:
+            return text2num(chinese[0])
+        else:
+            return 1  # 默认为一
 
+print(num_extract("四人轻微伤"))
 
 def extract_seg(content):
-    # 死亡人数、重伤人数、轻伤人数提取
-    r1 = re.compile(u'[1234567890一二两三四五六七八九十 ]*人( )*死亡')
-    r2 = re.search(r1, content)
-    if r2 is None:
-        num1 = 0
+    '''死亡人数、重伤人数、轻(微)伤人数提取'''
+    # 死亡人数
+    r1 = re.compile(r'[1234567890一二两三四五六七八九十]?人死亡')
+    search_dead = re.search(r1, content)
+    if search_dead:
+        num_dead = num_extract(search_dead.group())
     else:
-        text = r2.group()
-        num1 = per_num(text)
+        num_dead = 0
     # 重伤人数
-    r3 = re.compile(u'[1234567890一二两三四五六七八九十 ]*人( )*重伤')
-    r4 = re.search(r3, content)
-    if r4 is None:
-        num2 = 0
+    r2 = re.compile(r'[1234567890一二两三四五六七八九十]?人重伤')
+    search_severe = re.search(r2, content)
+    if search_severe:
+        num_severe = num_extract(search_severe.group())
     else:
-        text = r4.group()
-        num2 = per_num(text)
-    # 受伤人数
-    r5 = re.compile(u'[1234567890一二两三四五六七八九十 ]*人( )*(轻伤|受伤|轻微伤|轻伤.级)')
-    r6 = re.search(r5, content)
-    if r6 is None:
-        num3 = 0
+        num_severe = 0
+    # 轻伤人数
+    r3 = re.compile(r'[1234567890一二两三四五六七八九十]?人(轻伤|轻伤.级)')
+    search_minor = re.search(r3, content)
+    if search_minor:
+        num_minor = num_extract(search_minor.group())
     else:
-        text = r6.group()
-        num3 = per_num(text)
-    return num1, num2, num3
+        num_minor = 0
+    # 轻微伤人数
+    r4 = re.compile(r"[1234567890一二两三四五六七八九十]?人(受伤|轻微伤)")
+    search_slight = re.search(r4, content)
+    if search_slight:
+        print(search_slight.group())
+        num_slight = num_extract(search_slight.group())
+    else:
+        num_slight = 0
 
+    return num_dead, num_severe, num_minor, num_slight
+
+print(extract_seg("一人死亡四人轻微伤"))
 
 def sentence_result(text):
     '''提取出判决结果，单位为月份'''
