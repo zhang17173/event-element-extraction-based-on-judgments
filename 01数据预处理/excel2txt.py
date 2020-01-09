@@ -13,13 +13,15 @@ records = sheet0.col_values(21)[1:]  # 第21列代表庭审过程，包含【辩
 court_opinion = sheet0.col_values(27)[1:]  # 第27列代表法院意见
 sentence = sheet0.col_values(29)[1:]  # 第29列代表判决结果
 
+# 提取辩护人意见
 re_argument = re.compile(
-    r"辩护人.{0,6}(提出|认为|所提|辩解|要求|建议|辩护|辩称).*?。")    # 提取辩护人意见
+    r"辩护人.{0,6}(提出|认为|所提|辩解|要求|建议|辩护|辩称).*?。")
 # 提取审理查明
 re_truth = re.compile(
     r"(公诉机关指控|检察院.{0,5}指控|经.*?查明).*?(上述事实|以上事实|上述案件事实|公诉机关认为|公诉机关认定|为证实|该院认为|检察院认为|被告人.*?异议)")
 re_truth_1 = re.compile(r"(公诉机关指控|检察院.{0,5}指控|经.*?查明).*")
-re_sentence = re.compile(r"判决如下.*?(被告人.*(年|月|处罚))")  # 提取判决结果
+# 提取判决结果
+re_sentence = re.compile(r"判决如下.*?(被告人.*(年|月|处罚))")
 
 # 写入文本文件
 f1 = open("data/original_data/argument.txt", "w", encoding='utf-8')   # 辩护人意见

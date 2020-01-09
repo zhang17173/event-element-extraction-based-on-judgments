@@ -29,7 +29,6 @@ def find_element(l, *ss):
 
 def text2num(text):
     '''中文数字转阿拉伯数字,只适用于不超过四位数的情况'''
-
     # 将text序列连接成字符串
     text = "".join(text)
     digit = {
@@ -72,11 +71,11 @@ def num_extract(text):
             return 1  # 默认为一
 
 
-def extract_death_number(content):
+def extract_death_num(content):
     '''提取死亡人数'''
     if content == None:
         return 0
-    re_dead = re.compile(r'[1234567890一二两三四五六七八九十 ]?人死亡')  # 致几人死亡
+    re_dead = re.compile(r'[1234567890一二两三四五六七八九十]?人死亡')  # 致几人死亡
     search_dead = re.search(re_dead, content)
     if search_dead:
         return num_extract(search_dead.group())
@@ -89,7 +88,7 @@ def extract_death_number(content):
             return 0
 
 
-def extract_seg(content):
+def extract_injured_num(content):
     '''提取轻微伤人数、轻伤人数、重伤人数'''
     if content == None:
         return 0, 0, 0
@@ -135,11 +134,10 @@ def extract_seg(content):
 
 
 def sentence_result_number(content):
-    '''提取出判决结果，单位为月份'''
+    '''提取有期徒刑刑期，单位为月份'''
     if content == None:
         return 0
-
-    r1 = re.compile(u'(有期徒刑|拘役)[一二三四五六七八九十又年零两]{1,}(个月|年)')
+    r1 = re.compile(r'(有期徒刑|拘役)[一二三四五六七八九十又年零两]{1,}(个月|年)')
     r2 = re.search(r1, content[0])
     if r2 is None:
         num = 0
@@ -164,8 +162,8 @@ def get_event_elements(case_file):
     :param case_file: 记录单个案件的文本文件
     :return event_elements: 返回一个字典，键为事件要素类型，值为对应的事件要素组成的list
     """
-    words = []  # 保存所有属于事件要素的单词
-    element_types = []  # 保存上述单词对应的事件要素类型
+    words = []  # 保存标注为事件要素的词语
+    element_types = []  # 保存上述词语对应的事件要素类型
 
     with open(case_file, "r", encoding='utf-8') as f1:
         rows = []
@@ -180,7 +178,7 @@ def get_event_elements(case_file):
                 element_types.append(row[-1][-1])
 
             elif "B" in row[-1]:
-                # 处理由多个单词组成的事件要素
+                # 处理由多组单词构成的事件要素
                 words.append(row[0])
                 element_types.append(row[-1][-1])
                 j = index + 1
@@ -231,7 +229,6 @@ def get_event_elements(case_file):
 def get_crime_stage(content):
     """
         得到犯罪阶段
-
     """
     if content == None:
         return "0"
@@ -274,10 +271,10 @@ def get_patterns(event_elements):
     patterns = dict()
 
     # 从事件要素中的"死亡情况"提取出特征：01死亡人数
-    patterns["01死亡人数"] = extract_death_number(event_elements["死亡情况"])
+    patterns["01死亡人数"] = extract_death_num(event_elements["死亡情况"])
 
     # 从事件要素中的"受伤情况"提取出三个特征：02轻微伤人数、03轻伤人数、04重伤人数
-    patterns["02轻微伤人数"], patterns["03轻伤人数"], patterns["04重伤人数"] = extract_seg(
+    patterns["02轻微伤人数"], patterns["03轻伤人数"], patterns["04重伤人数"] = extract_injured_num(
         event_elements["受伤情况"])
 
     # 从事件要素中的"罪名"提取出特征：05罪名
