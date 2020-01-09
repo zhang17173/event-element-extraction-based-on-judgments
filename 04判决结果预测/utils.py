@@ -8,6 +8,7 @@ def remove_duplicate_elements(l):
     :return: 去除重复元素的新列表
     """
     new_list = []
+    
     for elem in l:
         if elem not in new_list:
             new_list.append(elem)
