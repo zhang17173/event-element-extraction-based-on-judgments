@@ -10,27 +10,28 @@ def contribute(input):
     searchObj02 = re_contribute02.search(input)
     searchObj03 = re_contribute03.search(input)
     if searchObj01:
-        return searchObj01.group(1)
+        return True
     elif searchObj02:
-        return searchObj02.group(1)
+        return True
     elif searchObj03:
-        return searchObj03.group(1)
+        return True
     else:
-        return None
+        return False
 
 
 def damage(input):
     '''提取受伤情况，如：经鉴定戴某某因外伤致左眼眶下壁骨折和左侧上颌窦前壁骨折构成轻伤二级'''
-    re_damage = re.compile(r'经.*?(鉴定|诊断).*?(轻微伤|[轻重]伤(.级)?)')
+    re_damage = re.compile(r'致.{0,10}(轻微伤|[轻重受]伤(.级)?)(.{0,3}(轻微伤|[轻重受]伤(.级)?))?(.{0,3}(轻微伤|[轻重受]伤(.级)?))?')
+    #re_damage = re.compile(r'致.*?(轻微伤|[轻重受]伤(.级)?)')
     searchObj = re_damage.search(input)
     if searchObj:
-        return searchObj.group(2)
+        return searchObj.group()
     else:
         return None
 
 def death(input):
     '''提取死亡人数，如：致n人死亡'''
-    re_death = re.compile(r'致.[0,8]死亡')
+    re_death = re.compile(r'致.{0,8}死亡')
     searchObj = re_death.search(input)
     if searchObj:
         return searchObj.group()
@@ -53,9 +54,9 @@ def victim_fault(input):
     re_victim_fault = re.compile(r"被害人.{1,30}过错")
     search_victim_fault = re_victim_fault.search(input)
     if search_victim_fault:
-        return search_victim_fault.group()
+        return True
     else:
-        return None
+        return False
 
 
 def crime_name(input):
@@ -102,9 +103,9 @@ def limited_responsibility(input):
     re_limited_responsibility = re.compile(r'(系|为|是|属于|属|具有|有)限定刑事责任能力(人)?')
     searchObj = re_limited_responsibility.search(input)
     if searchObj:
-        return searchObj.group()
+        return True
     else:
-        return None
+        return False
 
 
 def pedigree(input):

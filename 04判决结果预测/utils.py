@@ -20,9 +20,12 @@ def find_element(l, *ss):
     :param l:列表
     :param ss:一个或多个字符串
     """
+
     for s in ss:
         for element in l:
-            if s in element:
+            if ("否" in element) or ("不" in element) or ("没有" in element):
+                return "0"
+            elif s in element:
                 return "1"
     return "0"
 
@@ -68,37 +71,64 @@ def num_extract(text):
         else:
             return 1  # 默认为一
 
-print(num_extract("四人轻微伤"))
+def extract_death_number(content):
+    # 提取出死亡数字
+    # 死亡人数、重伤人数、轻伤人数提取
+    if content == None:
+        return 0
+    r1 = re.compile(u'[1234567890一二两三四五六七八九十 ]*人( )*死亡') #致几人死亡
+    r2 = re.search(r1, content)
+    if r2 is None:
+        r3 = re.compile(u'致.{0,8}人( )*死亡') #致受害人死亡
+        r4 = re.search(r3, content)
+        if r4 is None:
+            num1 = 0
+        else:
+            num1 = 1
+    else:
+        text = r2.group()
+        num1 = per_num(text)
+    return num1
 
 def extract_seg(content):
-    '''死亡人数、重伤人数、轻(微)伤人数提取'''
-    # 死亡人数
-    r1 = re.compile(r'[1234567890一二两三四五六七八九十]?人死亡')
-    search_dead = re.search(r1, content)
-    if search_dead:
-        num_dead = num_extract(search_dead.group())
+    if content == None:
+        return 0, 0, 0
+    # 轻微伤人数、轻伤人数、重伤人数提取
+    r1 = re.compile(u'[1234567890一二两三四五六七八九十 ]*人( )*轻微伤')
+    r2 = re.search(r1, content)
+    if r2 is None:
+        r11 = re.compile(u'致.{0,8}人( )*轻微伤')  # 致受害人轻微伤/致人轻微伤
+        r22 = re.search(r11, content)
+        if r22 is None:
+            num1 = 0
+        else:
+            num1 = 1
     else:
-        num_dead = 0
-    # 重伤人数
-    r2 = re.compile(r'[1234567890一二两三四五六七八九十]?人重伤')
-    search_severe = re.search(r2, content)
-    if search_severe:
-        num_severe = num_extract(search_severe.group())
-    else:
-        num_severe = 0
+        text = r2.group()
+        num1 = per_num(text)
     # 轻伤人数
-    r3 = re.compile(r'[1234567890一二两三四五六七八九十]?人(轻伤|轻伤.级)')
-    search_minor = re.search(r3, content)
-    if search_minor:
-        num_minor = num_extract(search_minor.group())
+    r3 = re.compile(u'[1234567890一二两三四五六七八九十 ]*人( )*轻伤')
+    r4 = re.search(r3, content)
+    if r4 is None:
+        r33 = re.compile(u'致.{0,8}人( )*轻伤')  # 致受害人轻伤/致人轻伤
+        r44 = re.search(r33, content)
+        if r44 is None:
+            num2 = 0
+        else:
+            num2 = 1
     else:
-        num_minor = 0
-    # 轻微伤人数
-    r4 = re.compile(r"[1234567890一二两三四五六七八九十]?人(受伤|轻微伤)")
-    search_slight = re.search(r4, content)
-    if search_slight:
-        print(search_slight.group())
-        num_slight = num_extract(search_slight.group())
+        text = r4.group()
+        num2 = per_num(text)
+    # 重伤人数
+    r5 = re.compile(u'[1234567890一二两三四五六七八九十 ]*人( )*重伤')
+    r6 = re.search(r5, content)
+    if r6 is None:
+        r55 = re.compile(u'致.{0,8}人( )*重伤')  # 致受害人重伤/致人重伤
+        r66 = re.search(r55, content)
+        if r66 is None:
+            num3 = 0
+        else:
+            num3 = 1
     else:
         num_slight = 0
 
@@ -106,18 +136,12 @@ def extract_seg(content):
 
 print(extract_seg("一人死亡四人轻微伤"))
 
-def sentence_result(text):
+def sentence_result_number(content):
     '''提取出判决结果，单位为月份'''
-    text = text.strip(" ")  # 去除每行首尾可能出现的多余空格
-    text = text.replace(" ", "")  # 去除所有空格
-    if text.find("判决如下") != -1:
-        result = text.split('判决如下')[-1]
-    elif text.find("判处如下") != -1:
-        result = text.split('判处如下')[-1]
-    else:
-        result = text
+    if content == None:
+        return 0
     r1 = re.compile(u'(有期徒刑|拘役)[一二三四五六七八九十又年零两]{1,}(个月|年)')
-    r2 = re.search(r1, result)
+    r2 = re.search(r1, content[0])
     if r2 is None:
         num = 0
     else:
@@ -204,6 +228,41 @@ def get_event_elements(case_file):
 
         return event_elements
 
+def get_crime_stage(content):
+    """
+        得到犯罪阶段
+
+    """
+    if content == None:
+        return "0"
+    r1 = re.compile(u'预备')
+    r2 = re.search(r1, content)
+    if r2 != None:
+        return "1"
+    else:
+        r3 = re.compile(u'(未遂|中止)')
+        r4 = re.search(r3, content)
+        if r4 != None:
+            return "2"
+        else:
+            r5 = re.compile(u'既遂')
+            r6 = re.search(r5, content)
+            if r6 != None:
+                return "3"
+            else:
+                return "0"
+
+def judge_T_F(content):
+    """
+    事件要素值为False or True 的转化为数值
+    """
+    if(content == None):
+        return "-1"  #这里主要针对没有主动提到前科问题
+    elif (content == True):
+        return "1"
+    else :
+        return "0"
+
 
 def get_patterns(event_elements):
     """
@@ -213,32 +272,43 @@ def get_patterns(event_elements):
     """
     patterns = dict()
 
-    # 从事件要素中的"加刑因素"提取出三个特征：01死亡人数、02重伤人数、03轻伤人数
-    patterns["01死亡人数"], patterns["02重伤人数"], patterns["03轻伤人数"] = extract_seg(
-        "".join(event_elements["加刑因素"]))
+    # 从事件要素中的"死亡情况"提取出特征：01死亡人数
+    patterns["01死亡人数"] = extract_death_number(event_elements["死亡情况"])
 
-    # 从事件要素中的"主次责任"提取出特征：04责任认定
-    patterns["04责任认定"] = find_element(event_elements["主次责任"], "全部责任")
+    # 从事件要素中的"受伤情况"提取出三个特征：02轻微伤人数、03轻伤人数、04重伤人数
+    patterns["02轻微伤人数"], patterns["03轻伤人数"], patterns["04重伤人数"] = extract_seg(event_elements["受伤情况"])
 
-    # 从事件要素中的"加刑因素"提取出8个特征
-    patterns["05是否酒后驾驶"] = find_element(event_elements["加刑因素"], "酒")
-    patterns["06是否吸毒后驾驶"] = find_element(event_elements["加刑因素"], "毒")
-    patterns["07是否无证驾驶"] = find_element(event_elements["加刑因素"], "驾驶证", "证")
-    patterns["08是否无牌驾驶"] = find_element(event_elements["加刑因素"], "牌照", "牌")
-    patterns["09是否不安全驾驶"] = find_element(event_elements["加刑因素"], "安全")
-    patterns["10是否超载"] = find_element(event_elements["加刑因素"], "超载")
-    patterns["11是否逃逸"] = find_element(event_elements["加刑因素"], "逃逸", "逃离")
-    patterns["是否初犯偶犯"] = 1 - int(find_element(event_elements["加刑因素"], "前科"))
-
-    # 从事件要素中的"减刑因素"提取出7个特征
-    patterns["12是否抢救伤者"] = find_element(event_elements["减刑因素"], "抢救", "施救")
-    patterns["13是否报警"] = find_element(event_elements["减刑因素"], "报警", "自首", "投案")
-    patterns["14是否现场等待"] = find_element(event_elements["减刑因素"], "现场", "等候")
-    patterns["15是否赔偿"] = find_element(event_elements["减刑因素"], "赔偿")
-    patterns["16是否认罪"] = find_element(event_elements["减刑因素"], "认罪")
-    patterns["17是否如实供述"] = find_element(event_elements["减刑因素"], "如实")
-    if patterns["是否初犯偶犯"] == 0:
-        patterns["18是否初犯偶犯"] = "0"
+    # 从事件要素中的"罪名"提取出特征：05罪名
+    if event_elements["罪名"] == "故意伤害罪":
+        patterns["05罪名"] = "1"
+    elif event_elements["罪名"] == "故意杀人罪":
+        patterns["05罪名"] = "2" # 故意杀人罪
     else:
-        patterns["18是否初犯偶犯"] = "1"
+        patterns["05罪名"] = "0"
+
+    # 从事件要素中的"犯罪阶段"提取出特征：06犯罪阶段
+    if (patterns["05罪名"] == 1) or (event_elements["犯罪阶段"] == None):
+        patterns["06犯罪阶段"] = "0"
+    else:
+        patterns["06犯罪阶段"] = get_crime_stage(event_elements["犯罪阶段"])
+
+    patterns["07是否投案"] = find_element(event_elements["投案"], "拨打110报警电话", "自动投案", "主动投案",  "主动要求他人帮忙报案")
+    patterns["08是否如实供述"] = find_element(event_elements["如实供述"], "如实供述", "系坦白", "系坦白", "具有坦白情节", "主动供述", "主动交代")
+
+    if patterns["07是否投案"] == "1" and patterns["08是否如实供述"] == "1":
+        patterns["09是否自首"] = "1"
+    else:
+        patterns["09是否自首"] = find_element(event_elements["自首"], "是自首", "属自首", "构成自首", "具有自首情节")
+
+    patterns["10是否认罪"] = find_element(event_elements["认罪"], "自愿认罪认罚",  "自愿认罪",  "认罪认罚",  "认罪态度较好")
+    patterns["11是否赔偿"] = find_element(event_elements["赔偿"], "赔偿")
+    patterns["12是否取得谅解"] = find_element(event_elements["取得谅解"], "谅解")
+
+    patterns["13是否立功"] = judge_T_F(event_elements["是否立功"])
+    patterns["14是否限制刑事责任能力"] = judge_T_F(event_elements["是否限制刑事责任能力"])
+    patterns["15是否有前科"] = judge_T_F(event_elements["是否有前科"])
+    patterns["16被害人是否有过错"] = judge_T_F(event_elements["被害人是否有过错"])
+
+    patterns["判决结果"] = sentence_result_number(event_elements["判决结果"])
+
     return patterns
