@@ -71,15 +71,16 @@ def num_extract(text):
         else:
             return 1  # 默认为一
 
+
 def extract_death_number(content):
     # 提取出死亡数字
     # 死亡人数、重伤人数、轻伤人数提取
     if content == None:
         return 0
-    r1 = re.compile(u'[1234567890一二两三四五六七八九十 ]*人( )*死亡') #致几人死亡
+    r1 = re.compile(u'[1234567890一二两三四五六七八九十 ]*人( )*死亡')  # 致几人死亡
     r2 = re.search(r1, content)
     if r2 is None:
-        r3 = re.compile(u'致.{0,8}人( )*死亡') #致受害人死亡
+        r3 = re.compile(u'致.{0,8}人( )*死亡')  # 致受害人死亡
         r4 = re.search(r3, content)
         if r4 is None:
             num1 = 0
@@ -89,6 +90,7 @@ def extract_death_number(content):
         text = r2.group()
         num1 = per_num(text)
     return num1
+
 
 def extract_seg(content):
     if content == None:
@@ -134,7 +136,9 @@ def extract_seg(content):
 
     return num_dead, num_severe, num_minor, num_slight
 
+
 print(extract_seg("一人死亡四人轻微伤"))
+
 
 def sentence_result_number(content):
     '''提取出判决结果，单位为月份'''
@@ -228,6 +232,7 @@ def get_event_elements(case_file):
 
         return event_elements
 
+
 def get_crime_stage(content):
     """
         得到犯罪阶段
@@ -252,15 +257,16 @@ def get_crime_stage(content):
             else:
                 return "0"
 
+
 def judge_T_F(content):
     """
     事件要素值为False or True 的转化为数值
     """
     if(content == None):
-        return "-1"  #这里主要针对没有主动提到前科问题
+        return "-1"  # 这里主要针对没有主动提到前科问题
     elif (content == True):
         return "1"
-    else :
+    else:
         return "0"
 
 
@@ -276,13 +282,14 @@ def get_patterns(event_elements):
     patterns["01死亡人数"] = extract_death_number(event_elements["死亡情况"])
 
     # 从事件要素中的"受伤情况"提取出三个特征：02轻微伤人数、03轻伤人数、04重伤人数
-    patterns["02轻微伤人数"], patterns["03轻伤人数"], patterns["04重伤人数"] = extract_seg(event_elements["受伤情况"])
+    patterns["02轻微伤人数"], patterns["03轻伤人数"], patterns["04重伤人数"] = extract_seg(
+        event_elements["受伤情况"])
 
     # 从事件要素中的"罪名"提取出特征：05罪名
     if event_elements["罪名"] == "故意伤害罪":
         patterns["05罪名"] = "1"
     elif event_elements["罪名"] == "故意杀人罪":
-        patterns["05罪名"] = "2" # 故意杀人罪
+        patterns["05罪名"] = "2"  # 故意杀人罪
     else:
         patterns["05罪名"] = "0"
 
@@ -292,15 +299,19 @@ def get_patterns(event_elements):
     else:
         patterns["06犯罪阶段"] = get_crime_stage(event_elements["犯罪阶段"])
 
-    patterns["07是否投案"] = find_element(event_elements["投案"], "拨打110报警电话", "自动投案", "主动投案",  "主动要求他人帮忙报案")
-    patterns["08是否如实供述"] = find_element(event_elements["如实供述"], "如实供述", "系坦白", "系坦白", "具有坦白情节", "主动供述", "主动交代")
+    patterns["07是否投案"] = find_element(
+        event_elements["投案"], "拨打110报警电话", "自动投案", "主动投案",  "主动要求他人帮忙报案")
+    patterns["08是否如实供述"] = find_element(
+        event_elements["如实供述"], "如实供述", "系坦白", "系坦白", "具有坦白情节", "主动供述", "主动交代")
 
     if patterns["07是否投案"] == "1" and patterns["08是否如实供述"] == "1":
         patterns["09是否自首"] = "1"
     else:
-        patterns["09是否自首"] = find_element(event_elements["自首"], "是自首", "属自首", "构成自首", "具有自首情节")
+        patterns["09是否自首"] = find_element(
+            event_elements["自首"], "是自首", "属自首", "构成自首", "具有自首情节")
 
-    patterns["10是否认罪"] = find_element(event_elements["认罪"], "自愿认罪认罚",  "自愿认罪",  "认罪认罚",  "认罪态度较好")
+    patterns["10是否认罪"] = find_element(
+        event_elements["认罪"], "自愿认罪认罚",  "自愿认罪",  "认罪认罚",  "认罪态度较好")
     patterns["11是否赔偿"] = find_element(event_elements["赔偿"], "赔偿")
     patterns["12是否取得谅解"] = find_element(event_elements["取得谅解"], "谅解")
 
