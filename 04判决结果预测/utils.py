@@ -8,7 +8,6 @@ def remove_duplicate_elements(l):
     :return: 去除重复元素的新列表
     """
     new_list = []
-    
     for elem in l:
         if elem not in new_list:
             new_list.append(elem)
@@ -21,12 +20,9 @@ def find_element(l, *ss):
     :param l:列表
     :param ss:一个或多个字符串
     """
-
     for s in ss:
         for element in l:
-            if ("否" in element) or ("不" in element) or ("没有" in element):
-                return "0"
-            elif s in element:
+            if s in element:
                 return "1"
     return "0"
 
@@ -60,13 +56,13 @@ def text2num(text):
 
 
 def num_extract(text):
-    '''查找语句中的中文数字并转为阿拉伯数字,只适用于不超过四位数的情况'''
+    '''查找语句中的中文数字并转为阿拉伯数字,只适用于个位数的情况，后续修改'''
     # 如果语句中已经含有阿拉伯数字，则直接提取并返回
     num = re.findall(r"\d+", text)
     if num:
         return num[0]
     else:
-        chinese = re.findall(r"[一二两三四五六七八九十].*[一二两三四五六七八九十千百]?", text)
+        chinese = re.findall(r"[一二两三四五六七八九十]", text)
         if chinese:
             return text2num(chinese[0])
         else:
@@ -74,71 +70,65 @@ def num_extract(text):
 
 
 def extract_death_number(content):
-    # 提取出死亡数字
-    # 死亡人数、重伤人数、轻伤人数提取
+    '''提取死亡人数'''
     if content == None:
         return 0
-    r1 = re.compile(u'[1234567890一二两三四五六七八九十 ]*人( )*死亡')  # 致几人死亡
-    r2 = re.search(r1, content)
-    if r2 is None:
-        r3 = re.compile(u'致.{0,8}人( )*死亡')  # 致受害人死亡
-        r4 = re.search(r3, content)
-        if r4 is None:
-            num1 = 0
-        else:
-            num1 = 1
+    re_dead = re.compile(r'[1234567890一二两三四五六七八九十 ]?人死亡')  # 致几人死亡
+    search_dead = re.search(re_dead, content)
+    if search_dead:
+        return num_extract(search_dead.group())
     else:
-        text = r2.group()
-        num1 = per_num(text)
-    return num1
+        re_dead_1 = re.compile(r"致.{0,8}人死亡")  # 处理不指明人数的情况，如“致受害人死亡”
+        search_dead_1 = re.search(re_dead_1, content)
+        if search_dead_1:
+            return 1
+        else:
+            return 0
 
 
 def extract_seg(content):
+    '''提取轻微伤人数、轻伤人数、重伤人数'''
     if content == None:
         return 0, 0, 0
-    # 轻微伤人数、轻伤人数、重伤人数提取
-    r1 = re.compile(u'[1234567890一二两三四五六七八九十 ]*人( )*轻微伤')
-    r2 = re.search(r1, content)
-    if r2 is None:
-        r11 = re.compile(u'致.{0,8}人( )*轻微伤')  # 致受害人轻微伤/致人轻微伤
-        r22 = re.search(r11, content)
-        if r22 is None:
-            num1 = 0
-        else:
-            num1 = 1
+    # 轻微伤人数
+    re_slight = re.compile(r'[1234567890一二两三四五六七八九十]?人轻微伤')
+    search_slight = re.search(re_slight, content)
+    if search_slight:
+        num_slight = num_extract(search_slight.group())
     else:
-        text = r2.group()
-        num1 = per_num(text)
+        # 处理不指明人数的情况，如“致受害人轻微伤/致人轻微伤”，下同
+        re_slight_1 = re.compile(r"致.{0,8}人轻微伤")
+        search_slight_1 = re.search(re_slight_1, content)
+        if search_slight_1:
+            num_slight = 1
+        else:
+            num_slight = 0
     # 轻伤人数
-    r3 = re.compile(u'[1234567890一二两三四五六七八九十 ]*人( )*轻伤')
-    r4 = re.search(r3, content)
-    if r4 is None:
-        r33 = re.compile(u'致.{0,8}人( )*轻伤')  # 致受害人轻伤/致人轻伤
-        r44 = re.search(r33, content)
-        if r44 is None:
-            num2 = 0
-        else:
-            num2 = 1
+    re_minor = re.compile(r'[1234567890一二两三四五六七八九十]?人轻伤')
+    search_minor = re.search(re_minor, content)
+    if search_minor:
+        num_minor = num_extract(search_minor.group())
     else:
-        text = r4.group()
-        num2 = per_num(text)
+        re_minor_1 = re.compile(r"致.{0,8}人轻伤")
+        search_minor_1 = re.search(re_minor_1, content)
+        if search_minor_1:
+            num_minor = 1
+        else:
+            num_minor = 0
     # 重伤人数
-    r5 = re.compile(u'[1234567890一二两三四五六七八九十 ]*人( )*重伤')
-    r6 = re.search(r5, content)
-    if r6 is None:
-        r55 = re.compile(u'致.{0,8}人( )*重伤')  # 致受害人重伤/致人重伤
-        r66 = re.search(r55, content)
-        if r66 is None:
-            num3 = 0
-        else:
-            num3 = 1
+    re_severe = re.compile(r'[1234567890一二两三四五六七八九十]*人重伤')
+    search_severe = re.search(re_severe, content)
+    if search_severe:
+        num_severe = num_extract(search_severe.group())
     else:
-        num_slight = 0
+        re_severe_1 = re.compile(r"致.{0,8}人重伤")
+        search_severe_1 = re.search(re_severe_1, content)
+        if search_severe_1:
+            num_severe = 1
+        else:
+            num_severe = 0
 
-    return num_dead, num_severe, num_minor, num_slight
-
-
-print(extract_seg("一人死亡四人轻微伤"))
+    return num_slight, num_minor, num_severe
 
 
 def sentence_result_number(content):
