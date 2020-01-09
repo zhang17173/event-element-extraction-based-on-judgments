@@ -29,6 +29,9 @@ def find_element(l, *ss):
 
 def text2num(text):
     '''中文数字转阿拉伯数字,只适用于不超过四位数的情况'''
+
+    # 将text序列连接成字符串
+    text = "".join(text)
     digit = {
         '一': 1,
         '二': 2,
@@ -135,6 +138,7 @@ def sentence_result_number(content):
     '''提取出判决结果，单位为月份'''
     if content == None:
         return 0
+
     r1 = re.compile(u'(有期徒刑|拘役)[一二三四五六七八九十又年零两]{1,}(个月|年)')
     r2 = re.search(r1, content[0])
     if r2 is None:
