@@ -15,10 +15,10 @@ def data_split(data_csv):
         train_num = int(len(rows)*0.9)
         rows_train = rows[:train_num]
         rows_test = rows[train_num:]
-        with open("04判决结果预测/data/train16.csv", "w") as f_train:
+        with open("04判决结果预测/data/train6.csv", "w") as f_train:
             f_train_csv = csv.writer(f_train)
             f_train_csv.writerows(rows_train)
-        with open("04判决结果预测/data/test16.csv", "w") as f_test:
+        with open("04判决结果预测/data/test6.csv", "w") as f_test:
             f_test_csv = csv.writer(f_test)
             f_test_csv.writerows(rows_test)
 
@@ -96,7 +96,7 @@ def remove_error(csv_file1, csv_file2):
             f2_csv.writerows(cases_without_noises)
 
 
-remove_error("04判决结果预测/data/data_16.csv", "04判决结果预测/data/data_16_without_error.csv")
-data_split("04判决结果预测/data/data_16_without_error.csv")
+remove_error("04判决结果预测/data/data_6.csv", "04判决结果预测/data/data_6_without_error.csv")
+data_split("04判决结果预测/data/data_6_without_error.csv")
 # patterns_weight("./data/train16.csv", "./data/train6.csv")
 # patterns_weight("./data/test16.csv", "./data/test6.csv")
