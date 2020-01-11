@@ -3,16 +3,24 @@
 
 import xlrd
 import re
+import os
 from data_preprocess import preprocess
 
-excel_file = "data/original_data/所有案件.xlsx"  # excel文件路径
+excel_file = "./所有案件.xlsx"  # excel文件路径
+txt_folder = "./txt_files"  # 导出的txt文件路径
+argument_path = os.path.join(txt_folder, "argument.txt")
+truth_path = os.path.join(txt_folder, "truth.txt")
+court_opinion_path = os.path.join(txt_folder, "court_opinion.txt")
+sentence_path = os.path.join(txt_folder, "sentence.txt")
+all_cases_path = os.path.join(txt_folder, "cases.txt")
+
+# 读取excel
 wb = xlrd.open_workbook(excel_file)
 sheet0 = wb.sheets()[0]  # 获取第一个工作表
-
+# 读取指定列
 records = sheet0.col_values(21)[1:]  # 第21列代表庭审过程，包含【辩护人意见】和【审理查明】两部分
 court_opinion = sheet0.col_values(27)[1:]  # 第27列代表法院意见
 sentence = sheet0.col_values(29)[1:]  # 第29列代表判决结果
-
 # 提取辩护人意见
 re_argument = re.compile(
     r"辩护人.{0,6}(提出|认为|所提|辩解|要求|建议|辩护|辩称).*?。")
@@ -24,12 +32,11 @@ re_truth_1 = re.compile(r"(公诉机关指控|检察院.{0,5}指控|经.*?查明
 re_sentence = re.compile(r"判决如下.*?(被告人.*(年|月|处罚))")
 
 # 写入文本文件
-f1 = open("data/original_data/argument.txt", "w", encoding='utf-8')   # 辩护人意见
-f2 = open("data/original_data/truth.txt", 'w', encoding='utf-8')  # 审理查明
-f3 = open("data/original_data/court_opinion.txt",
-          'w', encoding='utf-8')  # 法院意见
-f4 = open("data/original_data/sentence.txt", 'w', encoding='utf-8')  # 判决结果
-f5 = open("data/original_data/cases.txt", "w", encoding="utf-8")  # 完整的案件
+f1 = open(argument_path, "w", encoding='utf-8')   # 辩护人意见
+f2 = open(truth_path, 'w', encoding='utf-8')  # 审理查明
+f3 = open(court_opinion_path,'w', encoding='utf-8')  # 法院意见
+f4 = open(sentence_path, 'w', encoding='utf-8')  # 判决结果
+f5 = open(all_cases_path, "w", encoding="utf-8")  # 完整的案件
 
 for elem1, elem2, elem3 in list(zip(records, court_opinion, sentence)):
     # 预处理

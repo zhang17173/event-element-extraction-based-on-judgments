@@ -2,9 +2,9 @@ import os
 from pyltp import Postagger
 from pyltp import NamedEntityRecognizer
 
-LTP_DATA_DIR = "/home/zhang17173/ltp_data_v3.4.0"  # ltp模型目录的路径，根据实际情况修改
-cws_path = "/home/zhang17173/ltp-3.4.0/bin/examples"  # ltp二进制可执行文件目录路径
-temp_path = "/home/zhang17173/event-element-extraction-based-on-judgments/02分词、词性标注、命名实体识别/temp.txt"  # 临时文件路径
+LTP_DATA_DIR = "~/ltp_data_v3.4.0"  # ltp模型目录的路径，根据实际情况修改
+cws_path = "~/ltp-3.4.0/bin/examples"  # ltp二进制可执行文件目录路径
+temp_path = "./temp.txt"  # 临时文件路径
 
 # 词性标注模型
 pos_model_path = os.path.join(LTP_DATA_DIR, 'pos.model')  # 词性标注模型路径
