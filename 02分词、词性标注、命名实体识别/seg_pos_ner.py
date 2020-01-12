@@ -2,8 +2,8 @@ import os
 from pyltp import Postagger
 from pyltp import NamedEntityRecognizer
 
-LTP_DATA_DIR = "~/ltp_data_v3.4.0"  # ltp模型目录的路径，根据实际情况修改
-cws_path = "~/ltp-3.4.0/bin/examples"  # ltp二进制可执行文件目录路径
+LTP_DATA_DIR = "../../ltp_data_v3.4.0"  # ltp模型目录的路径，根据实际情况修改
+cws_path = "../../ltp-3.4.0/bin/examples"  # ltp二进制可执行文件目录路径
 temp_path = "./temp.txt"  # 临时文件路径
 
 # 词性标注模型
@@ -34,9 +34,9 @@ def spn(input):
     return zip(words, postags, netags)
 
 
-f_output = open("02分词、词性标注、命名实体识别/seg_pos_ner_result.txt",
-                "w", encoding="utf-8")
-f = open("data/original_data/court_opinion.txt", "r", encoding="utf-8")
+
+f = open("../01数据预处理/txt_files/court_opinion.txt", "r", encoding="utf-8")
+f_output = open("./seg_pos_ner_result.txt", "w", encoding="utf-8")
 lines = f.readlines()
 for line in lines:
     zipped = spn(line)
@@ -45,6 +45,7 @@ for line in lines:
     f_output.write("\n")
 f_output.close()
 f.close()
+
 
 # 释放模型
 postagger.release()
