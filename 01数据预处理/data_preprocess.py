@@ -12,8 +12,8 @@ re_redundant_2 = re.compile(r'的|了|已|且|(刑期.*?算.*月)')
 
 
 def preprocess(line):
-    '''数据预处理'''
+    """数据预处理"""
     line1 = re.sub(r"（.*?）", "", line)  # 去除括号内注释
     line2 = re.sub("[%s]+" % punctuation, "", line1)  # 去除标点、特殊字符
-    line3 = re_redundant_2.sub("", line2)  # 去除冗余词
+    line3 = re_redundant_1.sub("", line2)  # 去除冗余词
     return line3

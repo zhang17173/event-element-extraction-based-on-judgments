@@ -6,13 +6,14 @@ import re
 import os
 from data_preprocess import preprocess
 
+# 路径设置
 excel_file = "./所有案件.xlsx"  # excel文件路径
 txt_folder = "./txt_files"  # 导出的txt文件路径
-argument_path = os.path.join(txt_folder, "argument.txt")
-truth_path = os.path.join(txt_folder, "truth.txt")
-court_opinion_path = os.path.join(txt_folder, "court_opinion.txt")
-sentence_path = os.path.join(txt_folder, "sentence.txt")
-all_cases_path = os.path.join(txt_folder, "cases.txt")
+argument_path = os.path.join(txt_folder, "argument.txt")  # 辩护人意见
+truth_path = os.path.join(txt_folder, "truth.txt")  # 审理查明
+court_opinion_path = os.path.join(txt_folder, "court_opinion.txt")  # 法院意见
+sentence_path = os.path.join(txt_folder, "sentence.txt")  # 判决结果
+all_cases_path = os.path.join(txt_folder, "cases.txt")  # 完整案件
 
 # 读取excel
 wb = xlrd.open_workbook(excel_file)
@@ -32,9 +33,9 @@ re_truth_1 = re.compile(r"(公诉机关指控|检察院.{0,5}指控|经.*?查明
 re_sentence = re.compile(r"判决如下.*?(被告人.*(年|月|处罚))")
 
 # 写入文本文件
-f1 = open(argument_path, "w", encoding='utf-8')   # 辩护人意见
+f1 = open(argument_path, "w", encoding='utf-8')  # 辩护人意见
 f2 = open(truth_path, 'w', encoding='utf-8')  # 审理查明
-f3 = open(court_opinion_path,'w', encoding='utf-8')  # 法院意见
+f3 = open(court_opinion_path, 'w', encoding='utf-8')  # 法院意见
 f4 = open(sentence_path, 'w', encoding='utf-8')  # 判决结果
 f5 = open(all_cases_path, "w", encoding="utf-8")  # 完整的案件
 
@@ -43,6 +44,16 @@ for elem1, elem2, elem3 in list(zip(records, court_opinion, sentence)):
     elem1 = preprocess(elem1)
     elem2 = preprocess(elem2)
     elem3 = preprocess(elem3)
+
+    # 写入判决结果
+    # 若判决结果为空，则跳过该案件
+    search_sentence = re_sentence.search(elem3)
+    if search_sentence:
+        f4.write(search_sentence.group(1) + '\n')
+    else:
+        # f4.write("None\n")
+        continue
+
     # 写入辩护人意见
     search_argument_1 = re_argument.search(elem1)
     search_argument_2 = re_argument.search(elem2)
@@ -52,6 +63,7 @@ for elem1, elem2, elem3 in list(zip(records, court_opinion, sentence)):
         f1.write(search_argument_2.group() + '\n')
     else:
         f1.write("None\n")
+
     # 写入审理查明
     search_truth = re_truth.search(elem1)
     if search_truth:
@@ -62,20 +74,15 @@ for elem1, elem2, elem3 in list(zip(records, court_opinion, sentence)):
             f2.write(search_truth_1.group() + '\n')
         else:
             f2.write("None\n")
+
     # 写入法院意见
     if elem2 == "":
         f3.write("None\n")
     else:
         f3.write(elem2 + '\n')
-    # 写入判决结果
-    search_sentence = re_sentence.search(elem3)
-    if search_sentence:
-        f4.write(search_sentence.group(1) + '\n')
-    else:
-        f4.write("None\n")
-    # 写入完整案件
-    f5.write(elem1+elem2+elem3+"\n")
 
+    # 写入完整案件
+    f5.write(elem1 + elem2 + elem3 + "\n")
 
 f1.close()
 f2.close()
